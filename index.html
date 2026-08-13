@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart OT Sterilization Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-content">
+
+        <div>
+            <h1>SMART OT STERILIZATION DASHBOARD</h1>
+            <p>IoT-Based UV-C Sterilization & Readiness Verification System</p>
+        </div>
+
+        <div class="auto-mode">
+            🤖
+
+            <div>
+                <strong>AUTOMATIC MODE</strong>
+                <small>System Active</small>
+            </div>
+
+            <span class="pulse-dot"></span>
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- SOUND PERMISSION -->
+
+<div class="sound-bar">
+
+    <div>
+        🔊
+        <strong>Safety Alarm</strong>
+        <span id="soundStatus">Sound permission required</span>
+    </div>
+
+    <button id="enableSoundBtn">
+        Enable Alarm
+    </button>
+
+</div>
+
+
+<!-- OT STATUS -->
+
+<div id="otStatusBar" class="ot-status">
+
+    <div>
+        <span class="status-label">OT STATUS</span>
+
+        <strong id="otStatus">
+            AUTOMATIC SAFETY CHECK
+        </strong>
+    </div>
+
+    <div id="statusMessage" class="status-message">
+        Checking OT conditions...
+    </div>
+
+</div>
+
+
+<main class="dashboard">
+
+
+<!-- AUTOMATIC CONTROL -->
+
+<section class="card automatic-card">
+
+    <div class="card-header">
+
+        <div>
+            <h2>🤖 Automatic Sterilization Control</h2>
+
+            <p class="card-subtitle">
+                Intelligent automatic safety decision
+            </p>
+        </div>
+
+        <span class="status-badge online">
+            ● AUTO ACTIVE
+        </span>
+
+    </div>
+
+
+    <div class="automatic-grid">
+
+        <div class="auto-condition">
+
+            <div class="condition-icon">☀️</div>
+
+            <div>
+                <span>UV-C Sensors</span>
+                <strong id="autoSensorStatus">
+                    4 / 4 ONLINE
+                </strong>
+            </div>
+
+            <span class="condition-check">
+                ✓
+            </span>
+
+        </div>
+
+
+        <div class="auto-condition">
+
+            <div class="condition-icon">👤</div>
+
+            <div>
+                <span>Person Detection</span>
+
+                <strong id="autoPersonStatus">
+                    AREA CLEAR
+                </strong>
+            </div>
+
+            <span id="personCheckIcon"
+                  class="condition-check">
+                ✓
+            </span>
+
+        </div>
+
+
+        <div class="auto-condition">
+
+            <div class="condition-icon">🚪</div>
+
+            <div>
+                <span>OT Door</span>
+
+                <strong id="autoDoorStatus">
+                    CLOSED
+                </strong>
+            </div>
+
+            <span id="doorCheckIcon"
+                  class="condition-check">
+                ✓
+            </span>
+
+        </div>
+
+
+        <div class="auto-condition">
+
+            <div class="condition-icon">📡</div>
+
+            <div>
+                <span>UV-C Intensity</span>
+
+                <strong>
+                    SAFE
+                </strong>
+            </div>
+
+            <span class="condition-check">
+                ✓
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div id="automaticDecision"
+         class="automatic-decision safe">
+
+        <div id="decisionIcon"
+             class="decision-icon">
+            🟢
+        </div>
+
+        <div>
+
+            <span>AUTOMATIC DECISION</span>
+
+            <strong id="decisionText">
+                CHECKING CONDITIONS
+            </strong>
+
+            <small id="decisionDescription">
+                System is checking all safety sensors.
+            </small>
+
+        </div>
+
+        <div class="relay-box">
+
+            <span>RELAY</span>
+
+            <strong id="relayState">
+                OFF
+            </strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- UV-C STERILIZATION -->
+
+<section class="card">
+
+    <div class="card-header">
+
+        <h2>UV-C Sterilization</h2>
+
+        <span id="sterilizationBadge"
+              class="status-badge standby">
+            STANDBY
+        </span>
+
+    </div>
+
+
+    <div class="status-row">
+
+        <span>UV-C System</span>
+
+        <strong id="sterilizationStatus">
+            Automatic Checking
+        </strong>
+
+    </div>
+
+
+    <div class="dose-section">
+
+        <div class="dose-heading">
+
+            <h3>UV-C Dose Progress</h3>
+
+            <strong id="uvValue">
+                0%
+            </strong>
+
+        </div>
+
+        <progress id="uvProgress"
+                  value="0"
+                  max="100">
+        </progress>
+
+        <div class="dose-scale">
+
+            <span>0%</span>
+            <span>Target: 100%</span>
+            <span>100%</span>
+
+        </div>
+
+    </div>
+
+
+    <div class="status-row">
+
+        <span>Time Remaining</span>
+
+        <strong id="timeRemaining">
+            Calculating...
+        </strong>
+
+    </div>
+
+</section>
+
+
+<!-- SENSOR MONITORING -->
+
+<section class="card">
+
+    <div class="card-header">
+
+        <h2>Sensor Monitoring</h2>
+
+        <span class="status-badge online">
+            LIVE
+        </span>
+
+    </div>
+
+
+    <div class="sensor-item">
+
+        <span>UV-C Sensor Network</span>
+
+        <span id="sensorNetworkStatus"
+              class="sensor-status">
+            🟢 4 / 4 Online
+        </span>
+
+    </div>
+
+
+    <div class="sensor-item">
+
+        <span>Person Detection</span>
+
+        <span id="pirStatus"
+              class="sensor-status">
+            🟢 Area Clear
+        </span>
+
+    </div>
+
+
+    <div class="sensor-item">
+
+        <span>Door Sensor</span>
+
+        <span id="doorStatus"
+              class="sensor-status">
+            🟢 Closed
+        </span>
+
+    </div>
+
+
+    <div class="sensor-item">
+
+        <span>IoT Connection</span>
+
+        <span class="sensor-status">
+            🟢 Connected
+        </span>
+
+    </div>
+
+</section>
+
+
+<!-- UV SENSOR NETWORK -->
+
+<section class="card sensor-network-card">
+
+    <div class="card-header">
+
+        <div>
+            <h2>UV-C Sensor Network</h2>
+
+            <p class="card-subtitle">
+                Multi-point sterilization verification
+            </p>
+        </div>
+
+        <span class="status-badge online">
+            4 / 4 ONLINE
+        </span>
+
+    </div>
+
+
+    <div class="sensor-reading">
+
+        <div>
+            <strong>UV Sensor 1</strong>
+            <small>Front Left Zone</small>
+        </div>
+
+        <strong class="uv-reading">
+            <span id="sensor1Value">250</span>
+            mJ/cm²
+        </strong>
+
+    </div>
+
+
+    <div class="sensor-reading">
+
+        <div>
+            <strong>UV Sensor 2</strong>
+            <small>Front Right Zone</small>
+        </div>
+
+        <strong class="uv-reading">
+            <span id="sensor2Value">247</span>
+            mJ/cm²
+        </strong>
+
+    </div>
+
+
+    <div class="sensor-reading">
+
+        <div>
+            <strong>UV Sensor 3</strong>
+            <small>Rear Left Zone</small>
+        </div>
+
+        <strong class="uv-reading">
+            <span id="sensor3Value">252</span>
+            mJ/cm²
+        </strong>
+
+    </div>
+
+
+    <div class="sensor-reading">
+
+        <div>
+            <strong>UV Sensor 4</strong>
+            <small>Rear Right Zone</small>
+        </div>
+
+        <strong class="uv-reading">
+            <span id="sensor4Value">249</span>
+            mJ/cm²
+        </strong>
+
+    </div>
+
+
+    <div class="network-health">
+
+        <span>Network Health</span>
+
+        <strong>🟢 100%</strong>
+
+    </div>
+
+</section>
+
+
+<!-- READINESS -->
+
+<section class="card readiness-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>OT Readiness Verification</h2>
+
+            <p class="card-subtitle">
+                Automatic readiness assessment
+            </p>
+
+        </div>
+
+        <span class="status-badge checking">
+            AUTO CHECK
+        </span>
+
+    </div>
+
+
+    <div id="readinessScore"
+         class="readiness-score">
+        0%
+    </div>
+
+
+    <h3 id="readinessStatus"
+        class="readiness-status">
+        NOT READY
+    </h3>
+
+
+    <div class="check-list">
+
+        <div id="doseCheck">
+            ❌ UV-C Dose Not Completed
+        </div>
+
+        <div id="doorCheck">
+            ✅ Door Closed
+        </div>
+
+        <div id="personCheck">
+            ✅ No Person Detected
+        </div>
+
+        <div id="sensorCheck">
+            ✅ Sensors Online
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- SENSOR COVERAGE MAP -->
+
+<section class="card coverage-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>OT Sensor Coverage Map</h2>
+
+            <p class="card-subtitle">
+                Four-zone UV-C monitoring
+            </p>
+
+        </div>
+
+        <span class="status-badge online">
+            ACTIVE
+        </span>
+
+    </div>
+
+
+    <div class="ot-room">
+
+        <div class="uv-zone zone-a">
+            <span>S1</span>
+            <small id="mapSensor1">250</small>
+        </div>
+
+        <div class="uv-zone zone-b">
+            <span>S2</span>
+            <small id="mapSensor2">247</small>
+        </div>
+
+        <div class="uv-zone zone-c">
+            <span>S3</span>
+            <small id="mapSensor3">252</small>
+        </div>
+
+        <div class="uv-zone zone-d">
+            <span>S4</span>
+            <small id="mapSensor4">249</small>
+        </div>
+
+
+        <div class="room-center">
+
+            <div class="room-icon">
+                🏥
+            </div>
+
+            <strong>OT ROOM</strong>
+
+            <span>
+                4-Zone UV-C Monitoring
+            </span>
+
+        </div>
+
+
+        <div class="map-door">
+            🚪 DOOR
+        </div>
+
+    </div>
+
+
+    <div class="map-legend">
+
+        <span>🟢 Sensor Active</span>
+        <span>📡 UV Monitoring</span>
+        <span>🚪 Safety Door</span>
+
+    </div>
+
+</section>
+
+
+<!-- LIVE GRAPH -->
+
+<section class="card graph-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>Live UV-C Dose Monitoring</h2>
+
+            <p class="card-subtitle">
+                Automatic real-time dose tracking
+            </p>
+
+        </div>
+
+        <span class="status-badge online">
+            LIVE
+        </span>
+
+    </div>
+
+
+    <div class="chart-container">
+
+        <canvas id="uvChart"></canvas>
+
+    </div>
+
+</section>
+
+
+<!-- AUTOMATIC SAFETY -->
+
+<section class="card safety-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>🔊 Automatic UV-C Safety Alarm</h2>
+
+            <p class="card-subtitle">
+                Automatic audio warning system
+            </p>
+
+        </div>
+
+        <span id="safetyBadge"
+              class="status-badge online">
+            SAFE
+        </span>
+
+    </div>
+
+
+    <div id="safetyAlert"
+         class="safety-alert safe">
+
+        🟢 AREA CLEAR
+
+        <br>
+
+        Automatic safety monitoring is active.
+
+    </div>
+
+
+    <div class="safety-info">
+
+        <div class="info-row">
+
+            <span>Person Detection</span>
+
+            <strong id="pirControlStatus">
+                🟢 CLEAR
+            </strong>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>Automatic Relay</span>
+
+            <strong id="relayStatus">
+                🟡 STANDBY
+            </strong>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>Safety Lock</span>
+
+            <strong id="safetySystemStatus">
+                🟢 ACTIVE
+            </strong>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>Audio Alarm</span>
+
+            <strong id="alarmStatus">
+                🔇 SILENT
+            </strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- AUTOMATIC PROCESS -->
+
+<section class="card process-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>🔄 Automatic Sterilization Process</h2>
+
+            <p class="card-subtitle">
+                Real-time process tracking
+            </p>
+
+        </div>
+
+        <span class="status-badge online">
+            AUTOMATED
+        </span>
+
+    </div>
+
+
+    <div class="process-flow">
+
+        <div id="stepSafety"
+             class="process-step active">
+
+            <div class="step-circle">
+                1
+            </div>
+
+            <strong>Safety Check</strong>
+
+            <small>
+                Checking sensors
+            </small>
+
+        </div>
+
+
+        <div class="process-line"></div>
+
+
+        <div id="stepSterilize"
+             class="process-step">
+
+            <div class="step-circle">
+                2
+            </div>
+
+            <strong>Sterilizing</strong>
+
+            <small>
+                UV-C active
+            </small>
+
+        </div>
+
+
+        <div class="process-line"></div>
+
+
+        <div id="stepVerify"
+             class="process-step">
+
+            <div class="step-circle">
+                3
+            </div>
+
+            <strong>Verification</strong>
+
+            <small>
+                Checking dose
+            </small>
+
+        </div>
+
+
+        <div class="process-line"></div>
+
+
+        <div id="stepReady"
+             class="process-step">
+
+            <div class="step-circle">
+                4
+            </div>
+
+            <strong>Ready</strong>
+
+            <small>
+                OT available
+            </small>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- EVENT LOG -->
+
+<section class="card event-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>Live Automatic Event Log</h2>
+
+            <p class="card-subtitle">
+                System-generated events
+            </p>
+
+        </div>
+
+        <span class="status-badge online">
+            LIVE
+        </span>
+
+    </div>
+
+
+    <div id="eventLog"
+         class="event-log">
+    </div>
+
+</section>
+
+
+<!-- HISTORY -->
+
+<section class="card history-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>Sterilization History</h2>
+
+            <p class="card-subtitle">
+                Previous automatic cycles
+            </p>
+
+        </div>
+
+        <span class="status-badge online">
+            RECORDS
+        </span>
+
+    </div>
+
+
+    <div class="history-item">
+
+        <div>
+            <strong>OT-03</strong>
+            <small>Previous Automatic Cycle</small>
+        </div>
+
+        <strong>250 mJ/cm²</strong>
+
+        <span class="history-success">
+            ✓ COMPLETED
+        </span>
+
+    </div>
+
+
+    <div class="history-item">
+
+        <div>
+            <strong>OT-03</strong>
+            <small>Previous Automatic Cycle</small>
+        </div>
+
+        <strong>245 mJ/cm²</strong>
+
+        <span class="history-success">
+            ✓ COMPLETED
+        </span>
+
+    </div>
+
+</section>
+
+
+<!-- SYSTEM HEALTH -->
+
+<section class="card health-card">
+
+    <div class="card-header">
+
+        <h2>System Health</h2>
+
+        <span class="status-badge online">
+            HEALTHY
+        </span>
+
+    </div>
+
+
+    <div class="health-item">
+        <span>UV Sensors</span>
+        <strong>100%</strong>
+    </div>
+
+    <div class="health-item">
+        <span>Person Sensor</span>
+        <strong>100%</strong>
+    </div>
+
+    <div class="health-item">
+        <span>Door Sensor</span>
+        <strong>100%</strong>
+    </div>
+
+    <div class="health-item">
+        <span>IoT Network</span>
+        <strong>100%</strong>
+    </div>
+
+</section>
+
+
+<!-- SYSTEM INFORMATION -->
+
+<section class="card">
+
+    <div class="card-header">
+
+        <h2>System Information</h2>
+
+        <span class="status-badge online">
+            ONLINE
+        </span>
+
+    </div>
+
+
+    <div class="info-row">
+        <span>OT Number</span>
+        <strong>OT-03</strong>
+    </div>
+
+    <div class="info-row">
+        <span>Controller</span>
+        <strong>ESP32</strong>
+    </div>
+
+    <div class="info-row">
+        <span>Operating Mode</span>
+        <strong class="green-text">AUTOMATIC</strong>
+    </div>
+
+    <div class="info-row">
+        <span>Communication</span>
+        <strong>Wi-Fi / IoT</strong>
+    </div>
+
+    <div class="info-row">
+        <span>System Status</span>
+        <strong class="green-text">
+            🟢 Operational
+        </strong>
+    </div>
+
+</section>
+
+
+</main>
+
+
+<footer>
+
+    Smart OT Sterilization System |
+    IoT-Based Monitoring & Readiness Verification
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
