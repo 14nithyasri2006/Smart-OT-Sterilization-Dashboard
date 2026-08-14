@@ -89,28 +89,57 @@ body {
 }
 
 
-/* SOUND BAR */
+/* TOP CONTROL BAR */
 
-.sound-bar {
+.top-control-bar {
     width: 95%;
     max-width: 1200px;
     margin: 18px auto 0;
-    padding: 12px 18px;
+    padding: 14px 18px;
     background: white;
     border-radius: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 15px;
     box-shadow: 0 3px 12px rgba(0,0,0,0.06);
 }
 
-.sound-bar > div {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+
+/* START BUTTON */
+
+.start-btn {
+    border: none;
+    padding: 13px 22px;
+    border-radius: 9px;
+    background: #087443;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
 }
 
-.sound-bar span {
+.start-btn:hover {
+    opacity: 0.9;
+}
+
+.start-btn:disabled {
+    background: #71817d;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+
+/* SOUND CONTROL */
+
+.sound-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sound-control > span:nth-child(2) {
     color: #71817d;
     font-size: 12px;
 }
@@ -866,6 +895,7 @@ footer {
 
 }
 
+
 @media (max-width: 700px) {
 
     .dashboard {
@@ -887,6 +917,24 @@ footer {
 
     .automatic-decision {
         flex-wrap: wrap;
+    }
+
+    .top-control-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .start-btn {
+        width: 100%;
+    }
+
+    .sound-control {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #enableSoundBtn {
+        width: 100%;
     }
 
     .ot-status {
@@ -917,12 +965,6 @@ footer {
 
     .history-item {
         grid-template-columns: 1fr;
-    }
-
-    .sound-bar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
     }
 
 }
