@@ -1,6 +1,7 @@
 // ==================================================
 // SMART OT STERILIZATION DASHBOARD
-// AUTOMATIC SYSTEM + AUTOMATIC BUZZER
+// START BUTTON + AUTOMATIC SYSTEM
+// 30 SECOND STERILIZATION
 // ==================================================
 
 let uvDose = 0;
@@ -17,6 +18,103 @@ let cycleCompleted = false;
 
 let safetyEventActive = false;
 
+let systemStarted = false;
+
+
+// ==================================================
+// START BUTTON
+// ==================================================
+
+const startSterilizationBtn =
+    document.getElementById(
+        "startSterilizationBtn"
+    );
+
+
+startSterilizationBtn.addEventListener(
+    "click",
+    startSterilization
+);
+
+
+function startSterilization() {
+
+    if (systemStarted) {
+        return;
+    }
+
+
+    if (!sensorsOnline) {
+
+        addEvent(
+            "Cannot start: UV-C sensors offline",
+            "🚨"
+        );
+
+        return;
+    }
+
+
+    if (personDetected) {
+
+        addEvent(
+            "Cannot start: Person detected",
+            "🚨"
+        );
+
+        return;
+    }
+
+
+    if (!doorClosed) {
+
+        addEvent(
+            "Cannot start: OT door is open",
+            "🚪"
+        );
+
+        return;
+    }
+
+
+    systemStarted = true;
+
+    uvDose = 0;
+
+    cycleCompleted = false;
+
+    sterilizationRunning = false;
+
+
+    startSterilizationBtn.innerText =
+        "🟢 STERILIZATION RUNNING";
+
+    startSterilizationBtn.disabled =
+        true;
+
+
+    addEvent(
+        "START button pressed",
+        "▶️"
+    );
+
+
+    addEvent(
+        "All safety conditions satisfied",
+        "🟢"
+    );
+
+
+    addEvent(
+        "UV-C sterilization started",
+        "☀️"
+    );
+
+
+    updateDashboard();
+
+}
+
 
 // ==================================================
 // BUZZER / AUDIO
@@ -30,7 +128,9 @@ let alarmPlaying = false;
 
 
 const enableSoundBtn =
-    document.getElementById("enableSoundBtn");
+    document.getElementById(
+        "enableSoundBtn"
+    );
 
 
 enableSoundBtn.addEventListener(
@@ -47,17 +147,23 @@ function enableSound() {
             window.webkitAudioContext
         )();
 
+
     soundEnabled = true;
+
 
     document.getElementById(
         "soundStatus"
     ).innerText =
         "Sound enabled";
 
+
     enableSoundBtn.innerText =
         "🔊 Alarm Enabled";
 
-    enableSoundBtn.disabled = true;
+
+    enableSoundBtn.disabled =
+        true;
+
 
     addEvent(
         "Safety alarm audio enabled",
@@ -80,6 +186,7 @@ function beep(
         return;
     }
 
+
     if (!audioContext) {
         return;
     }
@@ -88,11 +195,14 @@ function beep(
     const oscillator =
         audioContext.createOscillator();
 
+
     const gain =
         audioContext.createGain();
 
 
-    oscillator.type = "square";
+    oscillator.type =
+        "square";
+
 
     oscillator.frequency.value =
         frequency;
@@ -112,6 +222,7 @@ function beep(
 
 
     oscillator.start();
+
 
     oscillator.stop(
         audioContext.currentTime +
@@ -135,7 +246,6 @@ function startSafetyAlarm() {
             "🔇 ENABLE SOUND";
 
         return;
-
     }
 
 
@@ -153,8 +263,6 @@ function startSafetyAlarm() {
         "🔊 ALARM ACTIVE";
 
 
-    // Repeated buzzer
-
     let count = 0;
 
 
@@ -168,15 +276,18 @@ function startSafetyAlarm() {
 
             if (
                 count >= 6 ||
-                !personDetected &&
-                doorClosed
+                (!personDetected &&
+                doorClosed)
             ) {
 
                 clearInterval(
                     alarmInterval
                 );
 
-                alarmPlaying = false;
+
+                alarmPlaying =
+                    false;
+
 
                 document.getElementById(
                     "alarmStatus"
@@ -243,7 +354,8 @@ const uvChart =
 
                 datasets: [{
 
-                    label: "UV-C Dose (%)",
+                    label:
+                        "UV-C Dose (%)",
 
                     data: [],
 
@@ -261,7 +373,8 @@ const uvChart =
 
                 responsive: true,
 
-                maintainAspectRatio: false,
+                maintainAspectRatio:
+                    false,
 
                 animation: false,
 
@@ -277,7 +390,8 @@ const uvChart =
 
                             display: true,
 
-                            text: "UV-C Dose (%)"
+                            text:
+                                "UV-C Dose (%)"
 
                         }
 
@@ -460,13 +574,16 @@ function safetyCheck() {
         return false;
     }
 
+
     if (personDetected) {
         return false;
     }
 
+
     if (!doorClosed) {
         return false;
     }
+
 
     return true;
 
@@ -478,6 +595,11 @@ function safetyCheck() {
 // ==================================================
 
 function runAutomaticSterilization() {
+
+    if (!systemStarted) {
+        return;
+    }
+
 
     const safe =
         safetyCheck();
@@ -514,16 +636,6 @@ function runAutomaticSterilization() {
 
         sterilizationRunning =
             true;
-
-        addEvent(
-            "All safety conditions satisfied",
-            "🟢"
-        );
-
-        addEvent(
-            "UV-C sterilization started automatically",
-            "☀️"
-        );
 
     }
 
@@ -589,6 +701,18 @@ function runAutomaticSterilization() {
 
         completionSound();
 
+
+        startSterilizationBtn.innerText =
+            "🔄 START NEW CYCLE";
+
+
+        startSterilizationBtn.disabled =
+            false;
+
+
+        systemStarted =
+            false;
+
     }
 
 
@@ -602,6 +726,11 @@ function runAutomaticSterilization() {
 // ==================================================
 
 function automaticSafetyEvent() {
+
+    if (!systemStarted) {
+        return;
+    }
+
 
     if (cycleCompleted) {
         return;
@@ -698,8 +827,10 @@ function clearSafetyEvent() {
     personDetected =
         false;
 
+
     doorClosed =
         true;
+
 
     safetyEventActive =
         false;
@@ -755,14 +886,27 @@ function updateProcessFlow() {
     safety.className =
         "process-step";
 
+
     sterilize.className =
         "process-step";
+
 
     verify.className =
         "process-step";
 
+
     ready.className =
         "process-step";
+
+
+    if (!systemStarted && !cycleCompleted) {
+
+        safety.className =
+            "process-step active";
+
+        return;
+
+    }
 
 
     if (
@@ -983,13 +1127,26 @@ function updateUV() {
 
     if (uvDose < 100) {
 
-        document.getElementById(
-            "timeRemaining"
-        ).innerText =
-            Math.ceil(
-                (100 - uvDose) * 0.3
-            ) +
-            " sec";
+        if (systemStarted) {
+
+            document.getElementById(
+                "timeRemaining"
+            ).innerText =
+                Math.ceil(
+                    (100 - uvDose) *
+                    0.3
+                ) + " sec";
+
+        }
+
+        else {
+
+            document.getElementById(
+                "timeRemaining"
+            ).innerText =
+                "30 sec";
+
+        }
 
     }
 
@@ -1056,6 +1213,17 @@ function updateUV() {
 
         badge.innerText =
             "STERILIZING";
+
+    }
+
+    else if (!systemStarted) {
+
+        status.innerText =
+            "Waiting to Start";
+
+
+        badge.innerText =
+            "STANDBY";
 
     }
 
@@ -1192,6 +1360,33 @@ function updateAutomaticPanel() {
 
         relay.innerText =
             "AUTO OFF";
+
+
+        return;
+
+    }
+
+
+    if (!systemStarted) {
+
+        panel.className =
+            "automatic-decision safe";
+
+
+        icon.innerText =
+            "🟡";
+
+
+        text.innerText =
+            "WAITING FOR START";
+
+
+        description.innerText =
+            "Press START STERILIZATION to begin.";
+
+
+        relay.innerText =
+            "OFF";
 
 
         return;
@@ -1597,11 +1792,11 @@ function updateOTStatus() {
 
 
     status.innerText =
-        "🤖 AUTOMATIC SAFETY CHECK";
+        "🤖 WAITING TO START";
 
 
     message.innerText =
-        "System is checking OT conditions.";
+        "Press START STERILIZATION to begin the process.";
 
 
     bar.className =
@@ -1675,14 +1870,18 @@ addEvent(
 );
 
 
+addEvent(
+    "Waiting for START button",
+    "▶️"
+);
+
+
 // ==================================================
 // AUTOMATIC TIMERS
 // ==================================================
 
-
-// UV-C progress
-// 100% in approximately 30 seconds
 // 1% every 300 milliseconds
+// 100% = approximately 30 seconds
 
 setInterval(
     runAutomaticSterilization,
@@ -1709,3 +1908,5 @@ setInterval(
 // Initial display
 
 generateSensorData();
+
+updateDashboard();
