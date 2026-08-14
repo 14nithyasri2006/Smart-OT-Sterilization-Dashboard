@@ -39,19 +39,29 @@
 </header>
 
 
-<!-- SOUND PERMISSION -->
+<!-- TOP CONTROL BAR -->
 
-<div class="sound-bar">
+<div class="top-control-bar">
 
-    <div>
-        🔊
-        <strong>Safety Alarm</strong>
-        <span id="soundStatus">Sound permission required</span>
-    </div>
-
-    <button id="enableSoundBtn">
-        Enable Alarm
+    <button id="startSterilizationBtn" class="start-btn">
+        ▶ START STERILIZATION
     </button>
+
+    <div class="sound-control">
+
+        <span>
+            🔊 <strong>Safety Alarm</strong>
+        </span>
+
+        <span id="soundStatus">
+            Sound permission required
+        </span>
+
+        <button id="enableSoundBtn">
+            Enable Alarm
+        </button>
+
+    </div>
 
 </div>
 
@@ -64,12 +74,12 @@
         <span class="status-label">OT STATUS</span>
 
         <strong id="otStatus">
-            AUTOMATIC SAFETY CHECK
+            WAITING TO START
         </strong>
     </div>
 
     <div id="statusMessage" class="status-message">
-        Checking OT conditions...
+        Press START STERILIZATION to begin the process.
     </div>
 
 </div>
@@ -107,6 +117,7 @@
 
             <div>
                 <span>UV-C Sensors</span>
+
                 <strong id="autoSensorStatus">
                     4 / 4 ONLINE
                 </strong>
@@ -185,7 +196,7 @@
 
         <div id="decisionIcon"
              class="decision-icon">
-            🟢
+            🟡
         </div>
 
         <div>
@@ -193,11 +204,11 @@
             <span>AUTOMATIC DECISION</span>
 
             <strong id="decisionText">
-                CHECKING CONDITIONS
+                WAITING FOR START
             </strong>
 
             <small id="decisionDescription">
-                System is checking all safety sensors.
+                Press START STERILIZATION to begin.
             </small>
 
         </div>
@@ -238,7 +249,7 @@
         <span>UV-C System</span>
 
         <strong id="sterilizationStatus">
-            Automatic Checking
+            Waiting to Start
         </strong>
 
     </div>
@@ -277,7 +288,7 @@
         <span>Time Remaining</span>
 
         <strong id="timeRemaining">
-            Calculating...
+            30 sec
         </strong>
 
     </div>
@@ -356,11 +367,13 @@
     <div class="card-header">
 
         <div>
+
             <h2>UV-C Sensor Network</h2>
 
             <p class="card-subtitle">
                 Multi-point sterilization verification
             </p>
+
         </div>
 
         <span class="status-badge online">
@@ -466,7 +479,7 @@
 
     <div id="readinessScore"
          class="readiness-score">
-        0%
+        60%
     </div>
 
 
@@ -731,7 +744,7 @@
             <strong>Safety Check</strong>
 
             <small>
-                Checking sensors
+                Waiting for start
             </small>
 
         </div>
